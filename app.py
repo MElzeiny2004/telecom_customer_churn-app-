@@ -2,10 +2,10 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-# إعدادات صفحة Streamlit
+
 st.set_page_config(page_title="توقع مغادرة العملاء (Customer Churn)", page_icon="📊", layout="centered")
 
-# تحميل الموديل المحفوظ مسبقاً (تأكد إن الملف مرفوع في نفس المجلد على جيت هب)
+
 @st.cache_resource
 def load_model():
     return joblib.load('churn_hgb_model.pkl')
@@ -15,7 +15,7 @@ model = load_model()
 st.title("📊 نظام توقع مغادرة العملاء (Telecom Customer Churn)")
 st.write("أدخل بيانات العميل في الأسفل للحصول على توقع ما إذا كان العميل سيغادر الشركة أم لا.")
 
-# تقسيم المدخلات في واجهة المستخدم بطريقة منظمة
+
 st.subheader("بيانات العميل الأساسية")
 
 col1, col2 = st.columns(2)
@@ -39,7 +39,7 @@ col3, col4 = st.columns(2)
 
 with col3:
     internet_type = st.selectbox('Internet Type (نوع الإنترنت)', ['DSL', 'Fiber Optic', 'Cable', 'None'])
-    contract_type = st.selectbox('Contract Type (نوع العقد)', ['Month-to-Month', 'One Year', 'Two Year'])
+    contract = st.selectbox('Contract (نوع العقد)', ['Month-to-Month', 'One Year', 'Two Year'])
     payment_method = st.selectbox('Payment Method (طريقة الدفع)', ['Bank Withdrawal', 'Credit Card', 'Mailed Check'])
     paperless_billing = st.selectbox('Paperless Billing (الفاتورة الإلكترونية)', ['Yes', 'No'])
     phone_service = st.selectbox('Phone Service (خدمة الهاتف)', ['Yes', 'No'])
@@ -61,16 +61,13 @@ col5, col6 = st.columns(2)
 with col5:
     offer = st.selectbox('Offer (العرض المقدم)', ['None', 'Offer A', 'Offer B', 'Offer C', 'Offer D', 'Offer E'])
 with col6:
-    # قيم افتراضية للموقع الجغرافي (أو يمكنك جعلها إدخالات لو كانت مطلوبة في الموديل)
     latitude = st.number_input('Latitude (خط العرض)', value=30.0)
     longitude = st.number_input('Longitude (خط الطول)', value=31.0)
     number_of_referrals = st.number_input('Number of Referrals (عدد الإحالات)', min_value=0, max_value=20, value=0)
 
-# عند الضغط على زر التوقع
 if st.button('احصل على التوقع (Predict)'):
     try:
-        # تجميع البيانات في DataFrame بنفس أسماء الأعمدة الدقيقة التي دربنا عليها الموديل
-        input_data = pd.DataFrame({
+            input_data = pd.DataFrame({
             'Age': [age],
             'Married': [married],
             'Gender': [gender],
@@ -82,7 +79,7 @@ if st.button('احصل على التوقع (Predict)'):
             'Avg Monthly Long Distance Charges': [avg_monthly_long_distance_charges],
             'Avg Monthly GB Download': [avg_monthly_gb_download],
             'Internet Type': [internet_type],
-            'Contract Type': [contract_type],
+            'Contract': [contract],  # تم تصحيح اسم العمود هنا ليطابق الموديل تماماً
             'Payment Method': [payment_method],
             'Paperless Billing': [paperless_billing],
             'Phone Service': [phone_service],
@@ -102,7 +99,7 @@ if st.button('احصل على التوقع (Predict)'):
             'Number of Referrals': [number_of_referrals]
         })
 
-        # تنفيذ التنبؤ باستخدام الـ Pipeline (الموديل)
+        # تنفيذ التنبؤ باستخدام الـ Pipeline
         prediction = model.predict(input_data)
         prediction_proba = model.predict_proba(input_data)
 
