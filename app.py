@@ -2,9 +2,7 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-
 st.set_page_config(page_title="توقع مغادرة العملاء (Customer Churn)", page_icon="📊", layout="centered")
-
 
 @st.cache_resource
 def load_model():
@@ -14,7 +12,6 @@ model = load_model()
 
 st.title("📊 نظام توقع مغادرة العملاء (Telecom Customer Churn)")
 st.write("أدخل بيانات العميل في الأسفل للحصول على توقع ما إذا كان العميل سيغادر الشركة أم لا.")
-
 
 st.subheader("بيانات العميل الأساسية")
 
@@ -67,7 +64,7 @@ with col6:
 
 if st.button('احصل على التوقع (Predict)'):
     try:
-            input_data = pd.DataFrame({
+        input_data = pd.DataFrame({
             'Age': [age],
             'Married': [married],
             'Gender': [gender],
@@ -79,7 +76,7 @@ if st.button('احصل على التوقع (Predict)'):
             'Avg Monthly Long Distance Charges': [avg_monthly_long_distance_charges],
             'Avg Monthly GB Download': [avg_monthly_gb_download],
             'Internet Type': [internet_type],
-            'Contract': [contract],  # تم تصحيح اسم العمود هنا ليطابق الموديل تماماً
+            'Contract': [contract],
             'Payment Method': [payment_method],
             'Paperless Billing': [paperless_billing],
             'Phone Service': [phone_service],
@@ -99,11 +96,9 @@ if st.button('احصل على التوقع (Predict)'):
             'Number of Referrals': [number_of_referrals]
         })
 
-        # تنفيذ التنبؤ باستخدام الـ Pipeline
         prediction = model.predict(input_data)
         prediction_proba = model.predict_proba(input_data)
 
-        # عرض النتيجة للمستخدم
         st.markdown("---")
         st.subheader("نتيجة التنبؤ:")
         
